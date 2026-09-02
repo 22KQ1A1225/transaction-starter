@@ -458,7 +458,7 @@ Failures: 0
 Errors: 0
 Skipped: 0
 
-BUILDBUILD SUCCESS
+BUILD SUCCESS
 ```
 
 # Known Limitations
