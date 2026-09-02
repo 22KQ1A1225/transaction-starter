@@ -25,6 +25,7 @@ The application implements four required operations:
 - Mockito
 - Postman
 - Git & GitHub
+- Eclipse
 
 ## Application Architecture
 
@@ -209,21 +210,49 @@ The application uses **H2 with Spring Data JPA**.
 
 H2 is configured as an in-memory database.
 
-Transaction data is cleared when the application restarts.
+The database is created automatically when the Spring Boot application starts.
 
-### H2 Console
+No separate database installation is required.
+
+Transaction data is cleared when the application is restarted.
+
+## H2 Console
+
+After starting the Spring Boot application in Eclipse, the H2 Console can be opened in a web browser.
 
 ```text
 http://localhost:8080/h2-console
 ```
 
-The H2 Console was used to verify that transactions were stored successfully.
+### How to Open H2 Console
+
+1. Start the Spring Boot application from Eclipse.
+2. Open a web browser.
+3. Enter:
+
+```text
+http://localhost:8080/h2-console
+```
+
+4. Enter the H2 database connection details configured in:
+
+```text
+src/main/resources/application.properties
+```
+
+5. Click **Connect**.
+6. Open the transaction table.
+7. Verify the transaction records stored in the database.
+
+The H2 Console was used to verify that transactions created through Postman were successfully stored in the database.
+
+> The exact JDBC URL, username, and password should be taken from the project's `application.properties` file.
 
 # Testing
 
 Automated tests were created using **JUnit 5 and Mockito**.
 
-The project contains **8 tests** covering successful operations, validation, and business-rule scenarios.
+The project contains **8 automated tests** covering successful operations, validation, and business-rule scenarios.
 
 ## Test Cases
 
@@ -236,7 +265,17 @@ The project contains **8 tests** covering successful operations, validation, and
 7. Preventing changes to completed transactions
 8. Preventing changes to failed transactions
 
-## Test Result
+## Automated Test Result
+
+The tests were executed directly in Eclipse.
+
+Steps used:
+
+1. Right-click the `transaction-starter` project.
+2. Select **Run As → JUnit Test**.
+3. Check the JUnit result window.
+
+Test result:
 
 ```text
 Tests run: 8
@@ -244,8 +283,10 @@ Failures: 0
 Errors: 0
 Skipped: 0
 
-ALL TESTS PASSED
+BUILD SUCCESS
 ```
+
+A green bar in the Eclipse JUnit window indicates that all tests passed successfully.
 
 # Postman Testing
 
@@ -259,9 +300,35 @@ The REST APIs were manually tested using Postman.
 | Get customer transactions | Passed |
 | Invalid amount | Passed - 400 Bad Request |
 
+## API URLs Used in Postman
+
+### Create Transaction
+
+```text
+POST http://localhost:8080/api/transactions
+```
+
+### Get Transaction
+
+```text
+GET http://localhost:8080/api/transactions/TXN007
+```
+
+### Update Transaction Status
+
+```text
+PUT http://localhost:8080/api/transactions/TXN007/status?newstatus=COMPLETED
+```
+
+### Get Customer Transactions
+
+```text
+GET http://localhost:8080/api/transactions/customer/CUST001
+```
+
 # H2 Database Verification
 
-The H2 Console was used to verify that transactions created through the API were stored in the database.
+The H2 Console was used to verify that transaction data created through Postman was stored successfully in the database.
 
 The complete flow was verified:
 
@@ -269,13 +336,13 @@ The complete flow was verified:
 Postman
    |
    v
-Controller
+TransactionController
    |
    v
-Service
+TransactionService
    |
    v
-Repository
+TransactionRepository
    |
    v
 H2 Database
@@ -283,7 +350,7 @@ H2 Database
 
 # Screenshots
 
-The `screenshots` folder contains:
+The `screenshots` folder contains evidence of the application testing:
 
 - `01-post-success.png` — Successful transaction creation
 - `02-get-success.png` — Successful transaction retrieval
@@ -292,6 +359,22 @@ The `screenshots` folder contains:
 - `05-bad-request.png` — Validation error
 - `06-h2-database.png` — H2 database verification
 - `07-Junit-tests.png` — JUnit test results
+
+# Challenge Requirements Completed
+
+The four required transaction operations from the engineering challenge have been implemented:
+
+| Requirement | Status |
+|---|---|
+| Create Transaction | Completed |
+| Get Transaction by ID | Completed |
+| Update Transaction Status | Completed |
+| Get Customer Transactions | Completed |
+| Validation Rules | Completed |
+| Duplicate Transaction ID Check | Completed |
+| Automated Tests | Completed |
+| H2 Database Verification | Completed |
+| Postman API Testing | Completed |
 
 # Project Structure
 
@@ -318,7 +401,6 @@ transaction-starter/
 │   │
 │   └── test/
 │       └── java/
-│           └── JUnit tests
 │
 ├── screenshots/
 │   ├── 01-post-success.png
@@ -336,37 +418,47 @@ transaction-starter/
 └── STUDENT_CHECKLIST.md
 ```
 
-# How to Run
+# How to Run the Project
 
 ## Using Eclipse
 
-1. Import the project as a Maven Project.
-2. Ensure Java 17 is configured.
-3. Open the main Spring Boot application class.
-4. Select **Run As → Java Application**.
-5. Wait for Spring Boot to start.
-6. Use Postman to test the APIs.
+The project is run directly from Eclipse.
 
-The application runs on:
+1. Open Eclipse.
+2. Open the `transaction-starter` project.
+3. Make sure Java 17 is configured.
+4. Open the main Spring Boot application class.
+5. Right-click the main application class.
+6. Select **Run As → Java Application**.
+7. Wait for Spring Boot to start successfully.
+8. Open Postman.
+9. Use the API endpoints to test the application.
+
+The application runs at:
 
 ```text
 http://localhost:8080
 ```
 
-## Running Tests
+# How to Run Tests
 
-The project includes the Maven Wrapper.
+The automated tests are run directly from Eclipse using JUnit.
 
-### Windows
+1. Open Eclipse.
+2. Right-click the `transaction-starter` project.
+3. Select **Run As → JUnit Test**.
+4. Eclipse runs all automated tests.
+5. Check the JUnit result window.
+
+Expected result:
 
 ```text
-mvnw.cmd clean test
-```
+Tests run: 8
+Failures: 0
+Errors: 0
+Skipped: 0
 
-### Linux / macOS
-
-```text
-./mvnw clean test
+BUILDBUILD SUCCESS
 ```
 
 # Known Limitations
@@ -376,22 +468,38 @@ mvnw.cmd clean test
 - Error handling can be improved further using custom exception classes and a global exception handler.
 - Authentication and authorization are outside the scope of this assignment.
 
-# AI Usage Disclosure
+# AI Assistance Disclosure
 
-ChatGPT was used during development to:
+AI tools were used during development as permitted by the assignment.
 
-- Understand the assignment and Spring Boot concepts.
-- Review code and validation rules.
-- Suggest test scenarios.
+ChatGPT was used to:
+
+- Understand the assignment requirements.
+- Understand Spring Boot concepts.
+- Review the project structure.
+- Review validation and business rules.
+- Suggest and review test scenarios.
 - Troubleshoot development issues.
-- Prepare project documentation.
+- Improve README documentation.
+- Understand H2 database verification.
 
-The suggestions were reviewed and adapted to the actual project.
+AI-generated suggestions were reviewed and adapted to the actual project.
 
-The final application was verified using Eclipse, Postman, H2 Console, and JUnit.
+The final implementation was tested and verified using:
+
+- Eclipse
+- JUnit
+- Postman
+- H2 Console
+
+Where AI suggestions did not match the actual project implementation or workflow, they were corrected before being used.
 
 # Conclusion
 
-This project implements the required transaction operations using Spring Boot, JPA, and H2.
+This project implements the required transaction management operations using **Java, Spring Boot, Spring Data JPA, and H2**.
 
-It includes validation, business rules, exception handling, automated tests, and API/database verification.
+The application provides transaction creation, transaction retrieval, transaction status updates, and customer transaction retrieval.
+
+Validation, business rules, automated testing, Postman API testing, and H2 database verification were completed.
+
+The automated test suite contains **8 tests**, with all tests passing successfully in Eclipse.
